@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import zenBg from "/assets/img/fundoTextura.png";
 import {
   buscarTransacoes,
   criarTransacao,
@@ -56,9 +57,18 @@ export default function Transacoes() {
   }
 
   return (
-    <div className="container mt-4">
-      <h1 className="mb-4 text-white">Transações</h1>
-
+    <div className="container py-4">
+      <div
+        className="text-center p-2 rounded-3 shadow mb-4 text-white"
+        style={{
+          backgroundImage: `linear-gradient(rgba(7, 94, 170, 0.5), rgba(7, 94, 170, 0.3)), url(${zenBg})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          textShadow: "5px 2px 4px #0a2540",
+        }}
+      >
+        <h1 className="fw-bold mb-2">Transações</h1>
+      </div>
       <form onSubmit={salvarTransacao} className="bg-white p-4 rounded mb-4">
         <div className="mb-3">
           <label className="form-label">Descrição</label>
