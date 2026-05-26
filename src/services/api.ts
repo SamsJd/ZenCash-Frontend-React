@@ -69,3 +69,29 @@ export async function buscarClientes() {
   const resposta = await fetch(`${API_URL}/clientes`);
   return resposta.json();
 }
+
+export async function criarCliente(cliente: any) {
+  const resposta = await fetch(`${API_URL}/clientes`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(cliente),
+  });
+
+  return resposta.json();
+}
+
+export async function atualizarCliente(id: number, cliente: any) {
+  const resposta = await fetch(`${API_URL}/clientes/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(cliente),
+  });
+
+  return resposta.json();
+}
+
+export async function deletarCliente(id: number) {
+  await fetch(`${API_URL}/clientes/${id}`, {
+    method: "DELETE",
+  });
+}
