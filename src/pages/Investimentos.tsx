@@ -10,8 +10,8 @@ import {
 export default function Investimentos() {
   const [investimentos, setInvestimentos] = useState<any[]>([]);
 
-  const [clienteId, setClienteId] = useState("");
-  const [produtoId, setProdutoId] = useState("");
+  const [nomeInvestimento, setNomeInvestimento] = useState("");
+  const [tipoInvestimento, setTipoInvestimento] = useState("");
   const [quantidade, setQuantidade] = useState("");
   const [valorUnitarioMedio, setValorUnitarioMedio] = useState("");
   const [dataCompra, setDataCompra] = useState("");
@@ -31,8 +31,8 @@ export default function Investimentos() {
     e.preventDefault();
 
     const investimento = {
-      clienteId: Number(clienteId),
-      produtoId: Number(produtoId),
+      clienteId: 1,
+      produtoId: Number(tipoInvestimento),
       quantidade: Number(quantidade),
       valorUnitarioMedio: Number(valorUnitarioMedio),
       dataCompra,
@@ -47,8 +47,8 @@ export default function Investimentos() {
 
     await carregarInvestimentos();
 
-    setClienteId("");
-    setProdutoId("");
+    setNomeInvestimento("");
+    setTipoInvestimento("");
     setQuantidade("");
     setValorUnitarioMedio("");
     setDataCompra("");
@@ -56,8 +56,8 @@ export default function Investimentos() {
 
   function editarInvestimento(investimento: any) {
     setIdEditando(investimento.id);
-    setClienteId(String(investimento.clienteId));
-    setProdutoId(String(investimento.produtoId));
+    setNomeInvestimento(obterNomeInvestimento(investimento.produtoId));
+    setTipoInvestimento(String(investimento.produtoId));
     setQuantidade(String(investimento.quantidade));
     setValorUnitarioMedio(String(investimento.valorUnitarioMedio));
     setDataCompra(investimento.dataCompra);
@@ -66,6 +66,28 @@ export default function Investimentos() {
   async function excluirInvestimento(id: number) {
     await deletarInvestimento(id);
     await carregarInvestimentos();
+  }
+
+  function obterNomeInvestimento(produtoId: number) {
+    if (produtoId === 1) return "Tesouro Selic";
+    if (produtoId === 2) return "CDB";
+    if (produtoId === 3) return "Ações";
+    if (produtoId === 4) return "Fundos Imobiliários";
+    if (produtoId === 5) return "Poupança";
+    return "Investimento";
+  }
+
+  function formatarMoeda(valor: number) {
+    return valor.toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    });
+  }
+
+  function formatarData(data: string) {
+    if (!data) return "";
+
+    return new Date(data + "T00:00:00").toLocaleDateString("pt-BR");
   }
 
   return (
@@ -82,54 +104,74 @@ export default function Investimentos() {
         <h1 className="fw-bold mb-2">Investimentos</h1>
       </div>
 
-      <form onSubmit={salvarInvestimento} className="bg-white p-4 rounded mb-4">
+      <form
+        onSubmit={salvarInvestimento}
+        className="p-4 rounded mb-4 shadow-sm"
+        style={{
+          backgroundImage: `linear-gradient(rgba(189, 212, 233, 0.4), rgba(205, 207, 209, 0.73)), url(${zenBg})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
         <div className="row">
           <div className="col-md-6 mb-3">
-            <label className="form-label">ID do Cliente</label>
+            <label className="form-label fw-bold">Nome do Investimento</label>
             <input
-              type="number"
+              type="text"
               className="form-control"
-              value={clienteId}
-              onChange={(e) => setClienteId(e.target.value)}
+              value={nomeInvestimento}
+              onChange={(e) => setNomeInvestimento(e.target.value)}
+              placeholder="Ex: Tesouro Selic, CDB, Ações"
               required
             />
           </div>
 
           <div className="col-md-6 mb-3">
-            <label className="form-label">ID do Produto</label>
-            <input
-              type="number"
+            <label className="form-label fw-bold">Tipo do Investimento</label>
+            <select
               className="form-control"
-              value={produtoId}
-              onChange={(e) => setProdutoId(e.target.value)}
+              value={tipoInvestimento}
+              onChange={(e) => {
+                setTipoInvestimento(e.target.value);
+                setNomeInvestimento(obterNomeInvestimento(Number(e.target.value)));
+              }}
               required
-            />
+            >
+              <option value="">Selecione</option>
+              <option value="1">Tesouro Selic</option>
+              <option value="2">CDB</option>
+              <option value="3">Ações</option>
+              <option value="4">Fundos Imobiliários</option>
+              <option value="5">Poupança</option>
+            </select>
           </div>
 
           <div className="col-md-4 mb-3">
-            <label className="form-label">Quantidade</label>
+            <label className="form-label fw-bold">Quantidade</label>
             <input
               type="number"
               className="form-control"
               value={quantidade}
               onChange={(e) => setQuantidade(e.target.value)}
+              placeholder="Ex: 10"
               required
             />
           </div>
 
           <div className="col-md-4 mb-3">
-            <label className="form-label">Valor Unitário Médio</label>
+            <label className="form-label fw-bold">Valor Médio</label>
             <input
               type="number"
               className="form-control"
               value={valorUnitarioMedio}
               onChange={(e) => setValorUnitarioMedio(e.target.value)}
+              placeholder="R$ 0.00"
               required
             />
           </div>
 
           <div className="col-md-4 mb-3">
-            <label className="form-label">Data da Compra</label>
+            <label className="form-label fw-bold">Data da Compra</label>
             <input
               type="date"
               className="form-control"
@@ -140,48 +182,140 @@ export default function Investimentos() {
           </div>
         </div>
 
-        <button className="btn btn-primary">
-          {idEditando ? "Atualizar" : "Salvar"}
+        <button className="btn btn-success w-100 fw-bold">
+          {idEditando ? "Atualizar Investimento" : "Confirmar Investimento"}
         </button>
       </form>
 
-      <div className="table-responsive">
-        <table className="table table-striped table-bordered bg-white">
-          <thead className="table-dark">
+      <div
+        className="table-responsive mb-4"
+        style={{
+          border: "2px solid #075eaac7",
+          borderRadius: "5px",
+          overflow: "visible",
+          boxShadow: "8px 2px 25px #0a254040",
+        }}
+      >
+        <table className="table mb-0">
+          <thead>
             <tr>
-              <th>ID</th>
-              <th>Cliente</th>
-              <th>Produto</th>
-              <th>Quantidade</th>
-              <th>Valor Unitário</th>
-              <th>Data Compra</th>
-              <th>Ações</th>
+              {[
+                "ID",
+                "Investimento",
+                "Tipo",
+                "Quantidade",
+                "Valor Médio",
+                "Data da Compra",
+                "Ações",
+              ].map((titulo) => (
+                <th
+                  key={titulo}
+                  style={{
+                    backgroundColor: "#075eaac7",
+                    color: "white",
+                  }}
+                >
+                  {titulo}
+                </th>
+              ))}
             </tr>
           </thead>
 
           <tbody>
-            {investimentos.map((investimento: any) => (
+            {investimentos.map((investimento: any, index: number) => (
               <tr key={investimento.id}>
-                <td>{investimento.id}</td>
-                <td>{investimento.clienteId}</td>
-                <td>{investimento.produtoId}</td>
-                <td>{investimento.quantidade}</td>
-                <td>R$ {investimento.valorUnitarioMedio}</td>
-                <td>{investimento.dataCompra}</td>
-                <td>
-                  <button
-                    className="btn btn-warning btn-sm me-2"
-                    onClick={() => editarInvestimento(investimento)}
-                  >
-                    Editar
-                  </button>
+                <td
+                  className="align-middle"
+                  style={{
+                    backgroundColor: index % 2 === 0 ? "#b6cee2" : "#f8fafc",
+                  }}
+                >
+                  {investimento.id}
+                </td>
 
-                  <button
-                    className="btn btn-danger btn-sm"
-                    onClick={() => excluirInvestimento(investimento.id)}
-                  >
-                    Excluir
-                  </button>
+                <td
+                  className="align-middle"
+                  style={{
+                    backgroundColor: index % 2 === 0 ? "#b6cee2" : "#f8fafc",
+                  }}
+                >
+                  {obterNomeInvestimento(investimento.produtoId)}
+                </td>
+
+                <td
+                  className="align-middle"
+                  style={{
+                    backgroundColor: index % 2 === 0 ? "#b6cee2" : "#f8fafc",
+                  }}
+                >
+                  {obterNomeInvestimento(investimento.produtoId)}
+                </td>
+
+                <td
+                  className="align-middle"
+                  style={{
+                    backgroundColor: index % 2 === 0 ? "#b6cee2" : "#f8fafc",
+                  }}
+                >
+                  {investimento.quantidade}
+                </td>
+
+                <td
+                  className="align-middle fw-bold text-success"
+                  style={{
+                    backgroundColor: index % 2 === 0 ? "#b6cee2" : "#f8fafc",
+                  }}
+                >
+                  {formatarMoeda(Number(investimento.valorUnitarioMedio))}
+                </td>
+
+                <td
+                  className="align-middle"
+                  style={{
+                    backgroundColor: index % 2 === 0 ? "#b6cee2" : "#f8fafc",
+                  }}
+                >
+                  {formatarData(investimento.dataCompra)}
+                </td>
+
+                <td
+                  className="align-middle text-center"
+                  style={{
+                    backgroundColor: index % 2 === 0 ? "#b6cee2" : "#f8fafc",
+                  }}
+                >
+                  <div className="dropdown text-center">
+                    <button
+                      className="btn btn-sm btn-primary dropdown-toggle fw-bold"
+                      type="button"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false"
+                    >
+                      Ações
+                    </button>
+
+                    <ul className="dropdown-menu text-center">
+
+                      <li>
+                        <button
+                          className="dropdown-item fw-bold"
+                          onClick={() => editarInvestimento(investimento)}
+                        >
+                          Editar
+                        </button>
+                      </li>
+
+                      <li>
+                        <button
+                          className="dropdown-item text-danger fw-bold"
+                          onClick={() => excluirInvestimento(investimento.id)}
+                        >
+                          Excluir
+                        </button>
+                      </li>
+
+                    </ul>
+                  </div>
                 </td>
               </tr>
             ))}
