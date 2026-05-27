@@ -1,75 +1,201 @@
-# React + TypeScript + Vite
+# 💸 ZenCash - Sistema Financeiro
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Projeto desenvolvido para a atividade **Cap 14 - Grand Finale**, integrando:
 
-Currently, two official plugins are available:
+- Java
+- Spring Boot
+- Oracle Database
+- ReactJS
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+O sistema permite o gerenciamento de:
 
-## React Compiler
+- Clientes
+- Transações
+- Investimentos
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+---
 
-Note: This will impact Vite dev & build performances.
+# 📚 Tecnologias Utilizadas
 
-## Expanding the ESLint configuration
+## Backend
+- Java 17
+- Spring Boot
+- Spring Data JPA
+- Oracle Database
+- Maven
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Frontend
+- ReactJS
+- TypeScript
+- Bootstrap
+- React Router DOM
+- Axios
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+---
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+# ⚙️ Funcionalidades
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## 👤 Clientes
+- Cadastrar clientes
+- Atualizar clientes
+- Excluir clientes
+- Listar clientes
+
+## 💰 Transações
+- Cadastro de receitas
+- Cadastro de gastos
+- Atualização de transações
+- Exclusão de transações
+
+## 📈 Investimentos
+- Cadastro de investimentos
+- Atualização de investimentos
+- Exclusão de investimentos
+- Controle de patrimônio investido
+
+## 🔐 Autenticação
+- Tela de login
+- Logout
+- Toasts de autenticação
+- Usuário de teste
+
+---
+
+# 🔑 Dados de Login
+
+```txt
+Email: admin@zencash.com
+Senha: 123456
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+# 🚀 Como executar o Backend
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## 1. Abrir o projeto backend no IntelliJ
+
+## 2. Configurar o Oracle Database FIAP
+
+Editar o arquivo:
+
+```txt
+src/main/resources/application.properties
 ```
+
+Adicionar/configurar:
+
+```properties
+spring.datasource.url=SEU_URL_ORACLE
+spring.datasource.username=SEU_USUARIO
+spring.datasource.password=SUA_SENHA
+
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+```
+
+---
+
+## 3. Instalar dependências Maven
+
+```bash
+mvn clean install
+```
+
+---
+
+## 4. Executar o projeto
+
+Rodar a classe principal Spring Boot.
+
+Backend será iniciado em:
+
+```txt
+http://localhost:8080
+```
+
+---
+
+# 🚀 Como executar o Frontend
+
+## 1. Abrir o projeto frontend
+
+## 2. Instalar dependências
+
+```bash
+npm install
+```
+
+---
+
+## 3. Executar o projeto
+
+```bash
+npm run dev
+```
+
+Frontend será iniciado em:
+
+```txt
+http://localhost:5173
+```
+
+---
+
+# 🔗 Integração Frontend + Backend
+
+O frontend consome APIs REST desenvolvidas em Spring Boot utilizando Axios.
+
+Exemplo de endpoints:
+
+```txt
+GET /transacoes
+POST /transacoes
+PUT /transacoes/{id}
+DELETE /transacoes/{id}
+```
+
+---
+
+# 📁 Estrutura do Projeto
+
+## Backend
+```txt
+backend/
+├── model
+├── repository
+├── service
+├── controller
+```
+
+## Frontend
+```txt
+frontend/
+├── assets
+├── components
+├── pages
+├── services
+├── routes
+```
+
+---
+
+# ✅ Requisitos Atendidos
+
+- CRUD completo
+- Integração React + Spring Boot
+- Oracle Database FIAP
+- SPA com React Router
+- Componentização
+- Hooks
+- Página de Login
+- Página Home
+- Página 404
+- Consumo de APIs REST
+- 3 entidades completas
+
+---
+
+# 👩‍💻 Desenvolvido por
+
+Sâmara Jeise Dias  
+RM: 567002

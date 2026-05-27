@@ -32,12 +32,16 @@ export default function Login() {
   function fazerLogin(e: any) {
     e.preventDefault();
 
-    if (email && senha) {
+    const emailTeste = "admin@zencash.com";
+    const senhaTeste = "123456";
+
+    if (email === emailTeste && senha === senhaTeste) {
+      localStorage.setItem("usuarioLogado", "true");
       localStorage.setItem("toastMensagem", "Login realizado com sucesso!");
       navigate("/");
     } else {
-      setToast("Preencha email e senha.");
-      setTipoToast("warning");
+      setToast("Email ou senha inválidos.");
+      setTipoToast("danger");
 
       setTimeout(() => {
         setToast("");
