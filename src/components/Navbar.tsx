@@ -1,9 +1,17 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Navbar() {
-
   const [isHovered, setIsHovered] = useState(false);
+
+  const navigate = useNavigate();
+
+  function sair() {
+    localStorage.setItem("toastMensagem", "Você saiu da conta!");
+    localStorage.setItem("toastTipo", "warning");
+
+    navigate("/login");
+  }
 
   return (
     <nav
@@ -14,14 +22,17 @@ export default function Navbar() {
       }}
     >
       <div className="container-fluid">
-        <Link className="navbar-brand fw-bold fs-4 d-flex align-items-center gap-2" to="/">
-          <img 
+        <Link
+          className="navbar-brand fw-bold fs-4 d-flex align-items-center gap-2"
+          to="/"
+        >
+          <img
             src="/assets/img/Logo_v4.png"
-            alt="Logo ZenCash" 
-            style={{ 
+            alt="Logo ZenCash"
+            style={{
               height: "35px",
-              width: "auto" 
-            }} 
+              width: "auto",
+            }}
           />
           ZenCash
         </Link>
@@ -37,10 +48,14 @@ export default function Navbar() {
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
           style={{
-            backgroundColor: isHovered ? "rgba(255, 255, 255, 0.2)" : "transparent",
-            border: isHovered ? "2px solid #ffffff" : "2px solid rgba(255, 255, 255, 0.5)",
+            backgroundColor: isHovered
+              ? "rgba(255, 255, 255, 0.2)"
+              : "transparent",
+            border: isHovered
+              ? "2px solid #ffffff"
+              : "2px solid rgba(255, 255, 255, 0.5)",
             transition: "all 0.3s ease",
-            boxShadow: "none"
+            boxShadow: "none",
           }}
         >
           <span className="navbar-toggler-icon"></span>
@@ -48,7 +63,6 @@ export default function Navbar() {
 
         <div className="collapse navbar-collapse" id="navbarZenCash">
           <ul className="navbar-nav ms-auto text-end gap-lg-3 navbar-nav-hover">
-
             <li className="nav-item">
               <Link className="nav-link text-white" to="/">
                 Home
@@ -74,11 +88,21 @@ export default function Navbar() {
             </li>
 
             <li className="nav-item">
-              <Link className="nav-link text-white" to="/login">
+              <button
+                type="button"
+                className="nav-link text-white"
+                onClick={sair}
+                style={{
+                  background: "none",
+                  border: "none",
+                  padding: "8px 0",
+                  width: "100%",
+                  textAlign: "right",
+                }}
+              >
                 Sair
-              </Link>
+              </button>
             </li>
-
           </ul>
         </div>
       </div>

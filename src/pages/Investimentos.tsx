@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import zenBg from "/assets/img/fundoTextura.png";
+import ToastMessage from "../components/ToastMessage";
 import {
   buscarInvestimentos,
   criarInvestimento,
@@ -10,13 +11,15 @@ import {
 export default function Investimentos() {
   const [investimentos, setInvestimentos] = useState<any[]>([]);
 
-  const [nomeInvestimento, setNomeInvestimento] = useState("");
   const [tipoInvestimento, setTipoInvestimento] = useState("");
   const [quantidade, setQuantidade] = useState("");
   const [valorUnitarioMedio, setValorUnitarioMedio] = useState("");
   const [dataCompra, setDataCompra] = useState("");
 
   const [idEditando, setIdEditando] = useState<number | null>(null);
+
+  const [toast, setToast] = useState("");
+  const [tipoToast, setTipoToast] = useState<"success" | "danger" | "warning">("success");
 
   useEffect(() => {
     carregarInvestimentos();
@@ -41,13 +44,14 @@ export default function Investimentos() {
     if (idEditando) {
       await atualizarInvestimento(idEditando, investimento);
       setIdEditando(null);
+      mostrarToast("Investimento atualizado com sucesso!", "success");
     } else {
       await criarInvestimento(investimento);
+      mostrarToast("Investimento cadastrado com sucesso!", "success");
     }
 
     await carregarInvestimentos();
 
-    setNomeInvestimento("");
     setTipoInvestimento("");
     setQuantidade("");
     setValorUnitarioMedio("");
@@ -56,7 +60,6 @@ export default function Investimentos() {
 
   function editarInvestimento(investimento: any) {
     setIdEditando(investimento.id);
-    setNomeInvestimento(obterNomeInvestimento(investimento.produtoId));
     setTipoInvestimento(String(investimento.produtoId));
     setQuantidade(String(investimento.quantidade));
     setValorUnitarioMedio(String(investimento.valorUnitarioMedio));
@@ -66,6 +69,7 @@ export default function Investimentos() {
   async function excluirInvestimento(id: number) {
     await deletarInvestimento(id);
     await carregarInvestimentos();
+    mostrarToast("Investimento excluído com sucesso!", "danger");
   }
 
   function obterNomeInvestimento(produtoId: number) {
@@ -90,8 +94,22 @@ export default function Investimentos() {
     return new Date(data + "T00:00:00").toLocaleDateString("pt-BR");
   }
 
+  function mostrarToast(
+    mensagem: string,
+    tipo: "success" | "danger" | "warning" = "success"
+  ) {
+    setToast(mensagem);
+    setTipoToast(tipo);
+
+    setTimeout(() => {
+      setToast("");
+    }, 3000);
+  }
+
   return (
     <div className="container py-4">
+      <ToastMessage mensagem={toast} tipo={tipoToast} />
+
       <div
         className="text-center p-2 rounded-3 shadow mb-4 text-white"
         style={{
@@ -106,35 +124,21 @@ export default function Investimentos() {
 
       <form
         onSubmit={salvarInvestimento}
-        className="p-4 rounded mb-4 shadow-sm"
+        className="p-4 rounded mb-4 shadow-sm mx-auto"
         style={{
+          maxWidth: "850px",
           backgroundImage: `linear-gradient(rgba(189, 212, 233, 0.4), rgba(205, 207, 209, 0.73)), url(${zenBg})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
       >
-        <div className="row">
-          <div className="col-md-6 mb-3">
-            <label className="form-label fw-bold">Nome do Investimento</label>
-            <input
-              type="text"
-              className="form-control"
-              value={nomeInvestimento}
-              onChange={(e) => setNomeInvestimento(e.target.value)}
-              placeholder="Ex: Tesouro Selic, CDB, Ações"
-              required
-            />
-          </div>
-
-          <div className="col-md-6 mb-3">
-            <label className="form-label fw-bold">Tipo do Investimento</label>
+        <div className="row justify-content-center">
+          <div className="col-md-12 mb-3">
+            <label className="form-label fw-bold">Tipo de Investimento</label>
             <select
               className="form-control"
               value={tipoInvestimento}
-              onChange={(e) => {
-                setTipoInvestimento(e.target.value);
-                setNomeInvestimento(obterNomeInvestimento(Number(e.target.value)));
-              }}
+              onChange={(e) => setTipoInvestimento(e.target.value)}
               required
             >
               <option value="">Selecione</option>
@@ -201,8 +205,7 @@ export default function Investimentos() {
             <tr>
               {[
                 "ID",
-                "Investimento",
-                "Tipo",
+                "Tipo de Investimento",
                 "Quantidade",
                 "Valor Médio",
                 "Data da Compra",
@@ -231,15 +234,6 @@ export default function Investimentos() {
                   }}
                 >
                   {investimento.id}
-                </td>
-
-                <td
-                  className="align-middle"
-                  style={{
-                    backgroundColor: index % 2 === 0 ? "#b6cee2" : "#f8fafc",
-                  }}
-                >
-                  {obterNomeInvestimento(investimento.produtoId)}
                 </td>
 
                 <td
@@ -295,7 +289,6 @@ export default function Investimentos() {
                     </button>
 
                     <ul className="dropdown-menu text-center">
-
                       <li>
                         <button
                           className="dropdown-item fw-bold"
@@ -313,7 +306,6 @@ export default function Investimentos() {
                           Excluir
                         </button>
                       </li>
-
                     </ul>
                   </div>
                 </td>

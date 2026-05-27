@@ -9,14 +9,22 @@ import Transacoes from "../pages/Transacoes";
 import Investimentos from "../pages/Investimentos";
 import Clientes from "../pages/Clientes";
 import NotFound from "../pages/NotFound";
+import Cadastro from "../pages/Cadastro";
 
 function Layout() {
   const location = useLocation();
-  const estaNoLogin = location.pathname === "/login";
+  const esconderNavbar =
+    ["/login", "/cadastro"].includes(location.pathname) ||
+    ![
+      "/",
+      "/transacoes",
+      "/investimentos",
+      "/clientes",
+    ].includes(location.pathname);
 
   return (
     <div className="d-flex flex-column min-vh-100">
-      {!estaNoLogin && <Navbar />}
+      {!esconderNavbar && <Navbar />}
 
       <main className="flex-grow-1">
         <Routes>
@@ -26,10 +34,11 @@ function Layout() {
           <Route path="/investimentos" element={<Investimentos />} />
           <Route path="/clientes" element={<Clientes />} />
           <Route path="*" element={<NotFound />} />
+          <Route path="/cadastro" element={<Cadastro />} />
         </Routes>
       </main>
 
-      <Footer isLogin={estaNoLogin} />
+      <Footer isLogin={esconderNavbar} />
     </div>
   );
 }

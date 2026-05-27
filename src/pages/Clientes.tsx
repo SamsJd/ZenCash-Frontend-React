@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import zenBg from "/assets/img/fundoTextura.png";
+import ToastMessage from "../components/ToastMessage";
 import {
   buscarClientes,
   criarCliente,
@@ -9,12 +10,13 @@ import {
 
 export default function Clientes() {
   const [clientes, setClientes] = useState<any[]>([]);
-
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
-
   const [idEditando, setIdEditando] = useState<number | null>(null);
+
+  const [toast, setToast] = useState("");
+  const [tipoToast, setTipoToast] = useState<"success" | "danger" | "warning">("success");
 
   useEffect(() => {
     carregarClientes();
@@ -25,20 +27,24 @@ export default function Clientes() {
     setClientes(dados);
   }
 
+  function mostrarToast(mensagem: string, tipo: "success" | "danger" | "warning" = "success") {
+    setToast(mensagem);
+    setTipoToast(tipo);
+    setTimeout(() => setToast(""), 3000);
+  }
+
   async function salvarCliente(e: any) {
     e.preventDefault();
 
-    const cliente = {
-      nome,
-      email,
-      senha,
-    };
+    const cliente = { nome, email, senha };
 
     if (idEditando) {
       await atualizarCliente(idEditando, cliente);
       setIdEditando(null);
+      mostrarToast("Cliente atualizado com sucesso!", "success");
     } else {
       await criarCliente(cliente);
+      mostrarToast("Cliente cadastrado com sucesso!", "success");
     }
 
     await carregarClientes();
@@ -58,10 +64,13 @@ export default function Clientes() {
   async function excluirCliente(id: number) {
     await deletarCliente(id);
     await carregarClientes();
+    mostrarToast("Cliente excluído com sucesso!", "danger");
   }
 
   return (
     <div className="container py-4">
+      <ToastMessage mensagem={toast} tipo={tipoToast} />
+
       <div
         className="text-center p-2 rounded-3 shadow mb-4 text-white"
         style={{
@@ -85,10 +94,7 @@ export default function Clientes() {
       >
         <div className="row">
           <div className="col-md-4 mb-3">
-            <label className="form-label fw-bold">
-              Nome Completo
-            </label>
-
+            <label className="form-label fw-bold">Nome Completo</label>
             <input
               type="text"
               className="form-control"
@@ -100,10 +106,7 @@ export default function Clientes() {
           </div>
 
           <div className="col-md-4 mb-3">
-            <label className="form-label fw-bold">
-              Email
-            </label>
-
+            <label className="form-label fw-bold">Email</label>
             <input
               type="email"
               className="form-control"
@@ -115,10 +118,7 @@ export default function Clientes() {
           </div>
 
           <div className="col-md-4 mb-3">
-            <label className="form-label fw-bold">
-              Senha
-            </label>
-
+            <label className="form-label fw-bold">Senha</label>
             <input
               type="password"
               className="form-control"
@@ -131,9 +131,7 @@ export default function Clientes() {
         </div>
 
         <button className="btn btn-success w-100 fw-bold">
-          {idEditando
-            ? "Atualizar Cliente"
-            : "Cadastrar Cliente"}
+          {idEditando ? "Atualizar Cliente" : "Cadastrar Cliente"}
         </button>
       </form>
 
@@ -147,135 +145,56 @@ export default function Clientes() {
         }}
       >
         <table className="table mb-0">
-
           <thead>
             <tr>
-              <th
-                style={{
-                  backgroundColor: "#075eaac7",
-                  color: "white",
-                }}
-              >
-                ID
-              </th>
-
-              <th
-                style={{
-                  backgroundColor: "#075eaac7",
-                  color: "white",
-                }}
-              >
-                Nome
-              </th>
-
-              <th
-                style={{
-                  backgroundColor: "#075eaac7",
-                  color: "white",
-                }}
-              >
-                Email
-              </th>
-
-              <th
-                style={{
-                  backgroundColor: "#075eaac7",
-                  color: "white",
-                }}
-              >
-                Ações
-              </th>
+              {["ID", "Nome", "Email", "Ações"].map((titulo) => (
+                <th key={titulo} style={{ backgroundColor: "#075eaac7", color: "white" }}>
+                  {titulo}
+                </th>
+              ))}
             </tr>
           </thead>
 
           <tbody>
             {clientes.map((cliente: any, index: number) => (
               <tr key={cliente.id}>
-
-                <td
-                  className="align-middle"
-                  style={{
-                    backgroundColor:
-                      index % 2 === 0
-                        ? "#b6cee2"
-                        : "#f8fafc",
-                  }}
-                >
+                <td className="align-middle" style={{ backgroundColor: index % 2 === 0 ? "#b6cee2" : "#f8fafc" }}>
                   {cliente.id}
                 </td>
 
-                <td
-                  className="align-middle fw-semibold"
-                  style={{
-                    backgroundColor:
-                      index % 2 === 0
-                        ? "#b6cee2"
-                        : "#f8fafc",
-                  }}
-                >
+                <td className="align-middle fw-semibold" style={{ backgroundColor: index % 2 === 0 ? "#b6cee2" : "#f8fafc" }}>
                   {cliente.nome}
                 </td>
 
-                <td
-                  className="align-middle"
-                  style={{
-                    backgroundColor:
-                      index % 2 === 0
-                        ? "#b6cee2"
-                        : "#f8fafc",
-                  }}
-                >
+                <td className="align-middle" style={{ backgroundColor: index % 2 === 0 ? "#b6cee2" : "#f8fafc" }}>
                   {cliente.email}
                 </td>
 
-                <td
-                  className="align-middle text-center"
-                  style={{
-                    backgroundColor:
-                      index % 2 === 0
-                        ? "#b6cee2"
-                        : "#f8fafc",
-                  }}
-                >
+                <td className="align-middle text-center" style={{ backgroundColor: index % 2 === 0 ? "#b6cee2" : "#f8fafc" }}>
                   <div className="dropdown text-center">
-                    <button
-                      className="btn btn-sm btn-primary dropdown-toggle fw-bold"
-                      type="button"
-                      data-bs-toggle="dropdown"
-                      aria-expanded="false"
-                    >
+                    <button className="btn btn-sm btn-primary dropdown-toggle fw-bold" type="button" data-bs-toggle="dropdown">
                       Ações
                     </button>
 
                     <ul className="dropdown-menu text-center">
-
                       <li>
-                        <button
-                          className="dropdown-item fw-bold"
-                          onClick={() => editarCliente(cliente)}
-                        >
+                        <button className="dropdown-item fw-bold" onClick={() => editarCliente(cliente)}>
                           Editar
                         </button>
                       </li>
 
                       <li>
-                        <button
-                          className="dropdown-item text-danger fw-bold"
-                          onClick={() => excluirCliente(cliente.id)}
-                        >
+                        <button className="dropdown-item text-danger fw-bold" onClick={() => excluirCliente(cliente.id)}>
                           Excluir
                         </button>
                       </li>
-
                     </ul>
                   </div>
                 </td>
-
               </tr>
             ))}
           </tbody>
         </table>
-
       </div>
     </div>
   );

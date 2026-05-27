@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import zenBg from "/assets/img/fundoTextura.png";
+import ToastMessage from "../components/ToastMessage";
 import { buscarInvestimentos, buscarTransacoes } from "../services/api";
 
 export default function Home() {
   const [transacoes, setTransacoes] = useState<any[]>([]);
   const [investimentos, setInvestimentos] = useState<any[]>([]);
+  const [toast, setToast] = useState("");
 
   useEffect(() => {
     buscarTransacoes().then((dados) => {
@@ -15,6 +17,17 @@ export default function Home() {
     buscarInvestimentos().then((dados) => {
       setInvestimentos(dados);
     });
+
+    const mensagem = localStorage.getItem("toastMensagem");
+
+    if (mensagem) {
+      setToast(mensagem);
+      localStorage.removeItem("toastMensagem");
+
+      setTimeout(() => {
+        setToast("");
+      }, 3000);
+    }
   }, []);
 
   const entradas = transacoes
@@ -48,6 +61,8 @@ export default function Home() {
 
   return (
     <div className="container py-4">
+      <ToastMessage mensagem={toast} tipo="success" />
+
       <div
         className="text-center p-4 rounded-3 shadow mb-5 text-white"
         style={{
@@ -92,22 +107,25 @@ export default function Home() {
 
                 <div className="d-flex justify-content-between mt-2 pt-2 border-top border-white">
                   <small className="text-success fw-bold">
-                    ↑ {formatarMoeda(entradas)}
+                    Entradas: {formatarMoeda(entradas)}
                   </small>
 
                   <small className="text-danger fw-bold">
-                    ↓ {formatarMoeda(saidas)}
+                    Saídas: {formatarMoeda(saidas)}
                   </small>
                 </div>
               </div>
 
-              <span className="text-secondary small d-block mb-2 fw-bold">
+              <span
+                className="small d-block mb-2 fw-bold"
+                style={{ color: "#0a2540", fontSize: "1rem" }}
+              >
                 Últimas Transações
               </span>
 
               <div className="d-flex flex-column gap-2 mb-3">
                 {ultimasTransacoes.length === 0 && (
-                  <span className="small text-secondary">
+                  <span className="small" style={{ color: "#0a2540" }}>
                     Nenhuma transação cadastrada.
                   </span>
                 )}
@@ -118,20 +136,19 @@ export default function Home() {
                     className="d-flex justify-content-between align-items-center py-2 border-bottom border-light"
                   >
                     <span
-                      className="small fw-medium"
-                      style={{ color: "#0a2540" }}
+                      className="fw-medium"
+                      style={{ color: "#0a2540", fontSize: "1rem" }}
                     >
                       {transacao.descricao}
                     </span>
 
                     <span
-                      className={`fw-semibold small ${
+                      className={`fw-semibold ${
                         transacao.tipoTransacaoId === 1
                           ? "text-success"
                           : "text-danger"
                       }`}
                     >
-                      {transacao.tipoTransacaoId === 1 ? "+ " : "- "}
                       {formatarMoeda(Number(transacao.valor))}
                     </span>
                   </div>
@@ -175,7 +192,7 @@ export default function Home() {
                 </h4>
 
                 <div className="d-flex justify-content-between align-items-center mt-2">
-                  <span className="text-secondary small">
+                  <span className="small" style={{ color: "#0a2540" }}>
                     Produtos cadastrados
                   </span>
 
@@ -185,7 +202,10 @@ export default function Home() {
                 </div>
               </div>
 
-              <span className="text-secondary small d-block mb-2 fw-bold">
+              <span
+                className="small d-block mb-2 fw-bold"
+                style={{ color: "#0a2540", fontSize: "1rem" }}
+              >
                 Evolução Patrimonial
               </span>
 
